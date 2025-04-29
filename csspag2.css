@@ -1,0 +1,203 @@
+body
+{
+    background-color: rgb(34,34,34);
+    color: white;
+    font-family: poppinsregular;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 15px;
+}
+header
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+#title
+{
+    display: flex;
+    flex-direction: column;
+    line-height: 5px;
+}
+li{
+    display: inline-block;
+    margin: 20px;
+}
+a{
+    color: white;
+    text-decoration: none;
+}
+a:hover{
+    color: rgb(132, 14, 201);
+    transition: 0.50s all;
+}
+h1
+{
+    font-weight: 200;
+    
+}
+.calendar-container {
+    width: 200px;
+    height: 200px;
+    perspective: 1000px;
+    transition: width 0.6s ease, height 0.6s ease;
+    margin-top: 100px;
+  }
+
+  .calendar-container.flipped {
+    width: 60vw;
+    height: 400px;
+  }
+
+  .flip-card {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+    cursor: pointer;
+  }
+
+  .calendar-container.flipped .flip-card {
+    transform: rotateY(180deg);
+  }
+  .calendar-container h2 {
+    color: white;
+    margin: 0;
+    font-size: 24px;
+    margin-left: 30px;
+    }
+
+  .flip-side {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #2b4450;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .front {
+    font-size: 48px;
+    font-weight: bold;
+    
+  }
+
+  .month-year {
+    font-size: 16px;
+    
+    margin-top: 10px;
+  }
+
+  .back {
+    transform: rotateY(180deg);
+    padding: 10px;
+    overflow-y: auto;
+    justify-content: flex-start;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    align-content: start; /* <-- ESSA LINHA AQUI */
+    }
+
+  .day,
+  .weekday {
+    padding: 10px 0;
+    border-radius: 6px;
+    font-size: 1.1em;
+    color: black;
+  }
+
+  .weekday {
+    font-weight: bold;
+    color: #333;
+    background: #eaeaea;
+  }
+
+  .day {
+    background: #f9f9f9;
+  }
+
+  .today {
+    background: #3498db;
+    color: white;
+    font-weight: bold;
+  }
+  .note-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .note-card {
+    background: #222;
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  }
+  
+  .note-card h3 {
+    margin: 0;
+    font-size: 1.2em;
+    color: white;
+  }
+  
+  .note-card textarea {
+    width: 100%;
+    height: 100px;
+    resize: none;
+    background-color: #333;
+    color: white;
+    border: 1px solid #555;
+    padding: 10px;
+    border-radius: 6px;
+    font-family: poppinsregular;
+  }
+  
+  .note-card button {
+    background-color: rgb(132, 14, 201);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: poppinsregular;
+    transition: 0.3s all;
+  }
+  
+  .note-card button:hover {
+    background-color: white;
+    color: rgb(132, 14, 201);
+  }
+  
+  .day.has-note {
+    background-color: gold;
+    color: black;
+    font-weight: bold;
+  }
