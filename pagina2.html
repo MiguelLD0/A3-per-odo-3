@@ -64,79 +64,163 @@
                 <button onclick="closeModal()">Fechar</button>
             </div>
         </div>
+
+        <div class="notes-container" id="notesBox">
+          <span><h2>Anotações</h2></span>
+          <div class="flip-card" onclick="document.getElementById('notesBox').classList.toggle('flipped')">
+            <div class="flip-side front">
+              <img src="./componentes/img/ilustracao-de-contrato-icone.png" alt="imagem do site">
+              <p style="padding: 20px;">Clique para abrir</p>
+            </div>
+            <div class="flip-side back">
+              <textarea id="generalNotes" placeholder="Escreva suas anotações aqui..." style="width: 100%; height: 150px;" onclick="event.stopPropagation()"></textarea>
+              <button onclick="saveGeneralNote()">Salvar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="tasks-container" id="tasksBox">
+          <span><h2>Tarefas do dia</h2></span>
+          <div class="flip-card" onclick="document.getElementById('tasksBox').classList.toggle('flipped')">
+            <div class="flip-side front">
+              <img src="./componentes/img/tarefas.png" alt="ícone de tarefas">
+              <p style="padding: 20px;">Clique para abrir</p>
+            </div>
+            <div class="flip-side back" >
+              <ul id="taskList"></ul>
+              <input type="text" id="newTaskInput" placeholder="Nova tarefa..." onclick="event.stopPropagation()"/>
+              <button onclick="addTask(), event.stopPropagation()">Adicionar</button>
+            </div>
+          </div>
+        </div>
     </main>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-          const container = document.getElementById("calendarBox");
-          container.addEventListener("click", () => {
-            container.classList.toggle("flipped");
-          });
-      
-          const now = new Date();
-          const day = now.getDate();
-          const month = now.toLocaleString("pt-BR", { month: "long" });
-          const year = now.getFullYear();
-      
-          document.getElementById("dayNumber").innerText = day;
-          document.getElementById("monthYear").innerText = `${month} ${year}`;
-      
-          const grid = document.getElementById("calendarGrid");
-      
-          function renderCalendar(monthIndex, year) {
-            const date = new Date(year, monthIndex, 1);
-            const firstDay = date.getDay();
-            const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
-      
-            grid.innerHTML = "";
-      
-            const weekDays = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
-            weekDays.forEach(weekDay => {
-              grid.innerHTML += `<div class="weekday">${weekDay}</div>`;
+  <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            const container = document.getElementById("calendarBox");
+            container.addEventListener("click", () => {
+              container.classList.toggle("flipped");
             });
-      
-            for (let i = 0; i < firstDay; i++) {
-              grid.innerHTML += `<div class="day"></div>`;
+        
+            const now = new Date();
+            const day = now.getDate();
+            const month = now.toLocaleString("pt-BR", { month: "long" });
+            const year = now.getFullYear();
+        
+            document.getElementById("dayNumber").innerText = day;
+            document.getElementById("monthYear").innerText = `${month} ${year}`;
+        
+            const grid = document.getElementById("calendarGrid");
+        
+            function renderCalendar(monthIndex, year) {
+              const date = new Date(year, monthIndex, 1);
+              const firstDay = date.getDay();
+              const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+        
+              grid.innerHTML = "";
+        
+              const weekDays = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+              weekDays.forEach(weekDay => {
+                grid.innerHTML += `<div class="weekday">${weekDay}</div>`;
+              });
+        
+              for (let i = 0; i < firstDay; i++) {
+                grid.innerHTML += `<div class="day"></div>`;
+              }
+        
+              for (let i = 1; i <= daysInMonth; i++) {
+                const isToday = i === now.getDate() && monthIndex === now.getMonth() && year === now.getFullYear();
+                const key = `${year}-${monthIndex + 1}-${i}`;
+                const hasNote = localStorage.getItem(key);
+                const extraClass = hasNote ? "has-note" : "";
+        
+                grid.innerHTML += `<div class="day ${isToday ? "today" : ""} ${extraClass}" onclick="openNote(${i}, ${monthIndex}, ${year})">${i}</div>`;
+              }
             }
-      
-            for (let i = 1; i <= daysInMonth; i++) {
-              const isToday = i === now.getDate() && monthIndex === now.getMonth() && year === now.getFullYear();
-              const key = `${year}-${monthIndex + 1}-${i}`;
-              const hasNote = localStorage.getItem(key);
-              const extraClass = hasNote ? "has-note" : "";
-      
-              grid.innerHTML += `<div class="day ${isToday ? "today" : ""} ${extraClass}" onclick="openNote(${i}, ${monthIndex}, ${year})">${i}</div>`;
-            }
+        
+            renderCalendar(now.getMonth(), year);
+          });
+        
+          // Agora essas funções estão no escopo global
+          function openNote(day, month, year) {
+            const key = `${year}-${month + 1}-${day}`;
+            document.getElementById("noteModal").style.display = "flex";
+            document.getElementById("selectedDateTitle").innerText = `Anotações para ${day}/${month + 1}/${year}`;
+            document.getElementById("noteText").value = localStorage.getItem(key) || "";
+            document.getElementById("noteModal").dataset.key = key;
           }
-      
-          renderCalendar(now.getMonth(), year);
+        
+          function closeModal() {
+            document.getElementById("noteModal").style.display = "none";
+          }
+        
+          function saveNote() {
+            const key = document.getElementById("noteModal").dataset.key;
+            const text = document.getElementById("noteText").value;
+        
+            if (text.trim() === "") {
+              localStorage.removeItem(key);
+            } else {
+              localStorage.setItem(key, text);
+            }
+        
+            closeModal();
+            location.reload(); // Atualiza para mostrar destaque amarelo
+          }
+
+          function saveGeneralNote() {
+          const text = document.getElementById("generalNotes").value;
+          localStorage.setItem("generalNote", text);
+          alert("Anotação salva!");
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+          const saved = localStorage.getItem("generalNote");
+          if (saved) {
+            document.getElementById("generalNotes").value = saved;
+          }
         });
+
+        document.addEventListener("DOMContentLoaded", function () {
+  loadTasks(); // Carrega tarefas ao abrir a página
+});
+
+    function addTask() {
+      const input = document.getElementById("newTaskInput");
+      const taskText = input.value.trim();
+      if (taskText === "") return;
+
+      const tasks = JSON.parse(localStorage.getItem("dailyTasks") || "[]");
+      tasks.push({ text: taskText, done: false });
+      localStorage.setItem("dailyTasks", JSON.stringify(tasks));
+      input.value = "";
+      loadTasks();
+    }
+
+    function toggleTask(index) {
+      const tasks = JSON.parse(localStorage.getItem("dailyTasks") || "[]");
+      tasks[index].done = !tasks[index].done;
+      localStorage.setItem("dailyTasks", JSON.stringify(tasks));
+      loadTasks();
+    }
+
+    function loadTasks() {
+      const list = document.getElementById("taskList");
+      list.innerHTML = "";
+
+      const tasks = JSON.parse(localStorage.getItem("dailyTasks") || "[]");
+
+      tasks.forEach((task, index) => {
+        const li = document.createElement("li");
+        li.style.cursor = "pointer";
+        li.style.textDecoration = task.done ? "line-through" : "none";
+        li.style.textDecorationColor = task.done ? "red" : "initial";
+        li.innerText = task.text;
+        li.onclick = () => toggleTask(index);
+        list.appendChild(li);
+      });
+    }
+
+  </script>
       
-        // Agora essas funções estão no escopo global
-        function openNote(day, month, year) {
-          const key = `${year}-${month + 1}-${day}`;
-          document.getElementById("noteModal").style.display = "flex";
-          document.getElementById("selectedDateTitle").innerText = `Anotações para ${day}/${month + 1}/${year}`;
-          document.getElementById("noteText").value = localStorage.getItem(key) || "";
-          document.getElementById("noteModal").dataset.key = key;
-        }
-      
-        function closeModal() {
-          document.getElementById("noteModal").style.display = "none";
-        }
-      
-        function saveNote() {
-          const key = document.getElementById("noteModal").dataset.key;
-          const text = document.getElementById("noteText").value;
-      
-          if (text.trim() === "") {
-            localStorage.removeItem(key);
-          } else {
-            localStorage.setItem(key, text);
-          }
-      
-          closeModal();
-          location.reload(); // Atualiza para mostrar destaque amarelo
-        }
-      </script>
 </body>
