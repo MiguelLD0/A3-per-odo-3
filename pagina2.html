@@ -93,6 +93,20 @@
             </div>
           </div>
         </div>
+        <div class="links-container" id="linksBox">
+          <span><h2>Links Úteis</h2></span>
+          <div class="flip-card" onclick="document.getElementById('linksBox').classList.toggle('flipped')">
+            <div class="flip-side front">
+              <img src="./componentes/img/link.png" alt="ícone de links" />
+              <p style="padding: 20px;">Clique para abrir</p>
+            </div>
+            <div class="flip-side back">
+              <ul id="linkList"></ul>
+              <input type="text" id="newLinkInput" placeholder="https://exemplo.com" onclick="event.stopPropagation()"/>
+              <button onclick="addLink(), event.stopPropagation()">Adicionar</button>
+            </div>
+          </div>
+        </div>
     </main>
 
   <script>
@@ -220,7 +234,39 @@
         list.appendChild(li);
       });
     }
+    function addLink() {
+      const input = document.getElementById("newLinkInput");
+      const url = input.value.trim();
+      if (url === "") return;
 
+      const links = JSON.parse(localStorage.getItem("usefulLinks") || "[]");
+      links.push(url);
+      localStorage.setItem("usefulLinks", JSON.stringify(links));
+      input.value = "";
+      loadLinks();
+    }
+
+    function loadLinks() {
+      const list = document.getElementById("linkList");
+      list.innerHTML = "";
+
+      const links = JSON.parse(localStorage.getItem("usefulLinks") || "[]");
+
+      links.forEach((url, index) => {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.href = url;
+        a.textContent = url;
+        a.target = "_blank";
+        a.style.color = "lightblue";
+        a.style.textDecoration = "none";
+        li.appendChild(a);
+        list.appendChild(li);
+      });
+    }
+
+    // Carregar links ao iniciar a página
+    window.addEventListener("DOMContentLoaded", loadLinks);
   </script>
       
 </body>
